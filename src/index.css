@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+:root {
+  --popup-width: 380px;
+  --popup-height: 520px;
+}
+
+body {
+  margin: 0;
+  width: var(--popup-width);
+  height: var(--popup-height);
+  font-family: system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+}
