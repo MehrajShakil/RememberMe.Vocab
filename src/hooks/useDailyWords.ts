@@ -76,6 +76,7 @@ export function useDailyWords() {
     rateWord,
     resetReviewed,
     reviewedCount: reviewed.size,
-    totalCount: dailyWords.length + reviewed.size,
+    // Exclude reviewed words still in dailyWords (timing gap before storage update propagates)
+    totalCount: dailyWords.filter((w) => !reviewed.has(w.word)).length + reviewed.size,
   };
 }
