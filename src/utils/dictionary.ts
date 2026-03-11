@@ -26,6 +26,6 @@ export async function fetchDefinition(
   }
 }
 
-export function getGoogleTranslateUrl(word: string): string {
-  return `https://translate.google.com/?sl=en&tl=auto&text=${encodeURIComponent(word)}`;
+export function getGoogleTranslateUrl(word: string, targetLanguage = 'auto'): string {
+  return `https://translate.google.com/?sl=en&tl=${targetLanguage}&text=${encodeURIComponent(word)}`;
 }

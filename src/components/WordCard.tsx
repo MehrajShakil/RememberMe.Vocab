@@ -8,13 +8,25 @@ export default function WordCard({
   word,
   isReviewed,
   onRate,
+  targetLanguage,
 }: {
   word: VocabWord;
   isReviewed: boolean;
   onRate: (word: string, quality: QualityRating) => void;
+  targetLanguage: string;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const { entry, loading, error } = useDictionary(expanded ? word.word : null);
+  const { entry, loading } = useDictionary(expanded ? word.word : null);
+
+  const translateUrl = getGoogleTranslateUrl(word.word, targetLanguage);
+
+  const partOfSpeech = entry?.meanings?.[0]?.partOfSpeech ?? null;
+
+  // Find the first example sentence across all meanings/definitions
+  const exampleSentence = entry?.meanings
+    ?.flatMap((m) => m.definitions)
+    ?.find((d) => d.example)
+    ?.example ?? null;
 
   if (isReviewed) {
     return (
@@ -45,82 +57,26 @@ export default function WordCard({
 
       {expanded && (
         <div className="px-3 pb-3 border-t border-gray-100">
-          {loading && (
-            <p className="text-sm text-gray-400 py-2">Loading definition...</p>
-          )}
-
-          {error && (
-            <p className="text-sm text-gray-400 py-2">
-              No definition found.{' '}
-              <a
-                href={getGoogleTranslateUrl(word.word)}
-                target="_blank"
-                rel="noreferrer"
-                className="text-indigo-500 underline"
-              >
-                View on Google Translate
-              </a>
-            </p>
-          )}
-
-          {entry && (
-            <div className="pt-2 space-y-2">
-              {entry.phonetics?.[0]?.text && (
-                <p className="text-sm text-gray-500 italic">
-                  {entry.phonetics[0].text}
-                </p>
-              )}
-
-              {entry.meanings.slice(0, 2).map((meaning, i) => {
-                const synonyms = [
-                  ...new Set([
-                    ...meaning.synonyms,
-                    ...meaning.definitions.flatMap((d) => d.synonyms),
-                  ]),
-                ].slice(0, 5);
-
-                return (
-                  <div key={i}>
-                    <p className="text-xs font-semibold text-indigo-500 uppercase">
-                      {meaning.partOfSpeech}
-                    </p>
-                    {meaning.definitions.slice(0, 2).map((def, j) => (
-                      <div key={j} className="ml-2 mt-0.5">
-                        <p className="text-sm text-gray-700">{def.definition}</p>
-                        {def.example && (
-                          <p className="text-xs text-gray-400 italic mt-0.5">
-                            "{def.example}"
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                    {synonyms.length > 0 && (
-                      <div className="ml-2 mt-1 flex flex-wrap gap-1">
-                        {synonyms.map((syn) => (
-                          <span
-                            key={syn}
-                            className="px-1.5 py-0.5 bg-indigo-50 text-indigo-600 text-xs rounded"
-                          >
-                            {syn}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-
-              <a
-                href={getGoogleTranslateUrl(word.word)}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-block text-xs text-indigo-500 hover:underline mt-1"
-              >
-                View on Google Translate →
-              </a>
-            </div>
-          )}
-
+          <div className="py-2">
+            {loading && <p className="text-sm text-gray-400">Loading...</p>}
+            {!loading && partOfSpeech && (
+              <span className="inline-block text-xs font-semibold text-indigo-500 uppercase mb-1">{partOfSpeech}</span>
+            )}
+            {!loading && exampleSentence && (
+              <p className="text-sm text-gray-600 italic">"{exampleSentence}"</p>
+            )}
+            {!loading && !exampleSentence && entry && (
+              <p className="text-sm text-gray-400">No example available.</p>
+            )}
+            <a
+              href={translateUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block text-xs text-indigo-500 hover:underline mt-2"
+            >
+              View on Google Translate →
+            </a>
+          </div>
           <RatingButtons onRate={(q) => onRate(word.word, q)} />
         </div>
       )}

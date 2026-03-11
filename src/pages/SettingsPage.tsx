@@ -1,18 +1,44 @@
 import { useState, useEffect } from 'react';
 import { useSettings } from '../hooks/useSettings';
 
+const LANGUAGES = [
+  { code: 'auto', label: 'Auto-detect' },
+  { code: 'bn', label: 'Bengali' },
+  { code: 'zh-CN', label: 'Chinese (Simplified)' },
+  { code: 'nl', label: 'Dutch' },
+  { code: 'fr', label: 'French' },
+  { code: 'de', label: 'German' },
+  { code: 'hi', label: 'Hindi' },
+  { code: 'id', label: 'Indonesian' },
+  { code: 'it', label: 'Italian' },
+  { code: 'ja', label: 'Japanese' },
+  { code: 'ko', label: 'Korean' },
+  { code: 'ms', label: 'Malay' },
+  { code: 'fa', label: 'Persian' },
+  { code: 'pl', label: 'Polish' },
+  { code: 'pt', label: 'Portuguese' },
+  { code: 'ru', label: 'Russian' },
+  { code: 'es', label: 'Spanish' },
+  { code: 'tr', label: 'Turkish' },
+  { code: 'uk', label: 'Ukrainian' },
+  { code: 'ur', label: 'Urdu' },
+  { code: 'vi', label: 'Vietnamese' },
+];
+
 export default function SettingsPage() {
   const { settings, loading, updateSettings } = useSettings();
   const [count, setCount] = useState(settings.dailyWordCount);
+  const [lang, setLang] = useState(settings.targetLanguage);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     setCount(settings.dailyWordCount);
-  }, [settings.dailyWordCount]);
+    setLang(settings.targetLanguage);
+  }, [settings.dailyWordCount, settings.targetLanguage]);
 
   const handleSave = async () => {
     const clamped = Math.min(50, Math.max(1, count));
-    await updateSettings({ ...settings, dailyWordCount: clamped });
+    await updateSettings({ ...settings, dailyWordCount: clamped, targetLanguage: lang });
     setCount(clamped);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -42,6 +68,21 @@ export default function SettingsPage() {
             />
             <span className="text-xs text-gray-400">words per day (1-50)</span>
           </div>
+        </div>
+
+        <div>
+          <label className="block text-sm text-gray-700 mb-1">
+            Translation language
+          </label>
+          <select
+            value={lang}
+            onChange={(e) => setLang(e.target.value)}
+            className="w-full px-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          >
+            {LANGUAGES.map((l) => (
+              <option key={l.code} value={l.code}>{l.label}</option>
+            ))}
+          </select>
         </div>
 
         <button

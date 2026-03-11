@@ -1,10 +1,12 @@
 import { useDailyWords } from '../hooks/useDailyWords';
+import { useSettings } from '../hooks/useSettings';
 import WordCard from '../components/WordCard';
 import EmptyState from '../components/EmptyState';
 
 export default function DailyWordsPage() {
   const { dailyWords, loading, reviewed, rateWord, reviewedCount, totalCount } =
     useDailyWords();
+  const { settings } = useSettings();
 
   if (loading) {
     return <p className="text-center text-gray-400 py-8">Loading...</p>;
@@ -35,6 +37,7 @@ export default function DailyWordsPage() {
             word={word}
             isReviewed={reviewed.has(word.word)}
             onRate={rateWord}
+            targetLanguage={settings.targetLanguage}
           />
         ))}
       </div>

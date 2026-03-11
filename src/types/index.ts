@@ -9,6 +9,7 @@ export interface VocabWord {
 
 export interface Settings {
   dailyWordCount: number;
+  targetLanguage: string;
 }
 
 export type QualityRating = 0 | 1 | 2 | 3 | 4 | 5;
@@ -39,6 +40,7 @@ export interface DictionaryEntry {
 
 export const DEFAULT_SETTINGS: Settings = {
   dailyWordCount: 10,
+  targetLanguage: 'auto',
 };
 
 export function createNewWord(word: string): VocabWord {
