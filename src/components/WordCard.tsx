@@ -22,12 +22,6 @@ export default function WordCard({
 
   const partOfSpeech = entry?.meanings?.[0]?.partOfSpeech ?? null;
 
-  // Find the first example sentence across all meanings/definitions
-  const exampleSentence = entry?.meanings
-    ?.flatMap((m) => m.definitions)
-    ?.find((d) => d.example)
-    ?.example ?? null;
-
   if (isReviewed) {
     return (
       <div className="rounded-lg border border-green-200 bg-green-50 p-3 mb-2 opacity-70">
@@ -61,12 +55,6 @@ export default function WordCard({
             {loading && <p className="text-sm text-gray-400">Loading...</p>}
             {!loading && partOfSpeech && (
               <span className="inline-block text-xs font-semibold text-indigo-500 uppercase mb-1">{partOfSpeech}</span>
-            )}
-            {!loading && exampleSentence && (
-              <p className="text-sm text-gray-600 italic">"{exampleSentence}"</p>
-            )}
-            {!loading && !exampleSentence && entry && (
-              <p className="text-sm text-gray-400">No example available.</p>
             )}
             <a
               href={translateUrl}
