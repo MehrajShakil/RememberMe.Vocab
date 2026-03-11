@@ -1,12 +1,14 @@
+import { useState } from 'react';
 import { useDailyWords } from '../hooks/useDailyWords';
 import { useSettings } from '../hooks/useSettings';
 import WordCard from '../components/WordCard';
 import EmptyState from '../components/EmptyState';
 
 export default function DailyWordsPage() {
-  const { dailyWords, loading, reviewed, rateWord, resetReviewed, reviewedCount, totalCount } =
+  const { dailyWords, loading, reviewed, rateWord, resetReviewed, resetWord, reviewedCount, totalCount } =
     useDailyWords();
   const { settings } = useSettings();
+  const [expandedWord, setExpandedWord] = useState<string | null>(null);
 
   if (loading) {
     return <p className="text-center text-gray-400 py-8">Loading...</p>;
@@ -47,7 +49,10 @@ export default function DailyWordsPage() {
             key={word.word}
             word={word}
             isReviewed={reviewed.has(word.word)}
+            isExpanded={expandedWord === word.word}
+            onToggle={() => setExpandedWord(expandedWord === word.word ? null : word.word)}
             onRate={rateWord}
+            onReset={resetWord}
             targetLanguage={settings.targetLanguage}
           />
         ))}
