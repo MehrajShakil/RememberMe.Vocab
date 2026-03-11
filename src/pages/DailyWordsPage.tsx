@@ -32,7 +32,7 @@ export default function DailyWordsPage() {
           {reviewedCount > 0 && (
             <button
               onClick={resetReviewed}
-              className="text-xs text-gray-400 hover:text-red-400 transition-colors"
+              className="text-xs text-gray-400 hover:text-red-400 transition-colors cursor-pointer"
               title="Reset today's review"
             >
               ↺ Reset
