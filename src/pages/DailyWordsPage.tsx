@@ -4,7 +4,7 @@ import WordCard from '../components/WordCard';
 import EmptyState from '../components/EmptyState';
 
 export default function DailyWordsPage() {
-  const { dailyWords, loading, reviewed, rateWord, reviewedCount, totalCount } =
+  const { dailyWords, loading, reviewed, rateWord, resetReviewed, reviewedCount, totalCount } =
     useDailyWords();
   const { settings } = useSettings();
 
@@ -25,9 +25,20 @@ export default function DailyWordsPage() {
     <div>
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-sm font-semibold text-gray-600">Today's Words</h2>
-        <span className="text-xs text-gray-400">
-          {reviewedCount} / {totalCount} reviewed
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-400">
+            {reviewedCount} / {totalCount} reviewed
+          </span>
+          {reviewedCount > 0 && (
+            <button
+              onClick={resetReviewed}
+              className="text-xs text-gray-400 hover:text-red-400 transition-colors"
+              title="Reset today's review"
+            >
+              ↺ Reset
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="space-y-0">

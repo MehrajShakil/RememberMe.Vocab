@@ -7,6 +7,9 @@ import { sm2 } from '../utils/sm2';
 
 const TODAY = new Date().toISOString().split('T')[0];
 const REVIEWED_KEY = `reviewed_${TODAY}`;
+const SNAPSHOTS_KEY = `snapshots_${TODAY}`;
+
+type Snapshots = Record<string, VocabWord>;
 
 export function useDailyWords() {
   const { words, loading: wordsLoading, updateWord } = useWords();
@@ -36,6 +39,14 @@ export function useDailyWords() {
       const current = dailyWords.find((w) => w.word === word);
       if (!current) return;
 
+      // Save pre-rating snapshot so reset can fully revert
+      const snapshotsResult = await chrome.storage.local.get(SNAPSHOTS_KEY);
+      const snapshots = (snapshotsResult[SNAPSHOTS_KEY] ?? {}) as Snapshots;
+      if (!snapshots[word]) {
+        snapshots[word] = current;
+        await chrome.storage.local.set({ [SNAPSHOTS_KEY]: snapshots });
+      }
+
       const result = sm2(current, quality);
       const updated: VocabWord = { ...current, ...result };
 
@@ -49,13 +60,22 @@ export function useDailyWords() {
     [dailyWords, updateWord]
   );
 
+  const resetReviewed = useCallback(async () => {
+    // Restore all pre-rating snapshots so words reappear in today's list
+    const result = await chrome.storage.local.get(SNAPSHOTS_KEY);
+    const snapshots = (result[SNAPSHOTS_KEY] ?? {}) as Snapshots;
+    await Promise.all(Object.values(snapshots).map((w) => updateWord(w)));
+    await chrome.storage.local.remove([REVIEWED_KEY, SNAPSHOTS_KEY]);
+    setReviewed(new Set());
+  }, [updateWord]);
+
   return {
     dailyWords,
     loading: wordsLoading || settingsLoading || reviewedLoading,
     reviewed,
     rateWord,
+    resetReviewed,
     reviewedCount: reviewed.size,
-    // Include already-reviewed words that were removed from dailyWords after their nextReview advanced
     totalCount: dailyWords.length + reviewed.size,
   };
 }
