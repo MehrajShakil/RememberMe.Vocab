@@ -33,6 +33,9 @@ export default function WordCard({
           <span className="text-sm font-medium text-green-700">{word.word}</span>
         </div>
         <div className="flex items-center gap-3">
+          {(word.successCount ?? 0) > 0 && (
+            <span className="text-xs text-green-500 font-medium">✓ {word.successCount}</span>
+          )}
           <button
             onClick={() => onReset(word.word)}
             className="text-xs text-gray-300 hover:text-red-400 transition-colors cursor-pointer"
@@ -57,6 +60,11 @@ export default function WordCard({
           <div className="flex items-center gap-3">
             <span className={`w-2 h-2 rounded-full shrink-0 transition-colors ${isExpanded ? 'bg-indigo-400' : 'bg-gray-300'}`}></span>
             <span className="text-base font-semibold text-gray-800 tracking-wide">{word.word}</span>
+            {(word.successCount ?? 0) > 0 && (
+              <span className="text-[10px] font-semibold text-green-500 bg-green-50 border border-green-100 px-1.5 py-0.5 rounded-full">
+                ✓ {word.successCount}
+              </span>
+            )}
           </div>
           <span className={`text-[11px] font-medium transition-colors ${isExpanded ? 'text-indigo-400' : 'text-gray-400'}`}>
             {isExpanded ? '▲ collapse' : '▼ reveal'}

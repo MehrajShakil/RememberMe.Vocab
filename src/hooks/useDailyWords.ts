@@ -51,7 +51,11 @@ export function useDailyWords() {
       }
 
       const result = sm2(current, quality);
-      const updated: VocabWord = { ...current, ...result };
+      const updated: VocabWord = {
+        ...current,
+        ...result,
+        successCount: quality >= 3 ? (current.successCount ?? 0) + 1 : (current.successCount ?? 0),
+      };
 
       await updateWord(updated);
       setReviewed((prev) => {

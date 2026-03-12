@@ -5,6 +5,7 @@ export interface VocabWord {
   interval: number;
   repetitions: number;
   nextReview: string;
+  successCount: number;
 }
 
 export interface Settings {
@@ -52,5 +53,6 @@ export function createNewWord(word: string): VocabWord {
     interval: 0,
     repetitions: 0,
     nextReview: today,
+    successCount: 0,
   };
 }
